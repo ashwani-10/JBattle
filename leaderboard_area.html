@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="leaderboard">
+        <h1>🏆 Leaderboard</h1>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard-body">
+                    <!-- API Data Will Be Inserted Here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+
+    <script>
+        const param = new URLSearchParams(window.location.search);
+        const gameCode = param.get("gameCode");
+
+        const API_URL = `http://localhost:8080/api/v1/game/leaderboard/${gameCode}`;
+        const userID = localStorage.getItem("userID");
+
+        async function fetchLeaderboard() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error("Failed to fetch leaderboard");
+
+                const players = await response.json(); // API se JSON list aayegi
+
+                const leaderboardBody = document.getElementById("leaderboard-body");
+                leaderboardBody.innerHTML = ""; // Purani rows clear
+
+                players.forEach((player, index) => {
+                    const row = document.createElement("tr");
+
+                    let rank = index + 1; // Rank 1 se start karna hai
+                    let medal = "";
+                    if (rank === 1) medal = "🥇";
+                    else if (rank === 2) medal = "🥈";
+                    else if (rank === 3) medal = "🥉";
+
+                    row.style.backgroundColor = rank === 1 ? "#FFD70099" 
+                    : rank === 2 ? "#C0C0C099"
+                    : rank === 3 ? "#CD7F3299" 
+                    : "transparent";
+                    
+                    
+                    row.innerHTML = `
+                        <td>${medal || rank}</td>
+                        <td>${player.name}</td>
+                        <td>${player.score}</td>
+                    `;
+                    leaderboardBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error("Error fetching leaderboard:", error);
+            }
+        }
+
+        fetchLeaderboard(); // Function call
+        setInterval(fetchLeaderboard,3000);
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #121212;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .leaderboard {
+            width: 90%;
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
+            text-align: center;
+            max-height: 100%; /* Jyada players hone par bhi fit rahega */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .table-container {
+            max-height: 100vh; /* Table ke liye max height */
+            overflow-y: auto;  /* Vertical scroll enable */
+        }
+
+        .table-container::-webkit-scrollbar {
+            width: 6px; /* Scrollbar width */
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background: #555; /* Scrollbar ka color */
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #333;
+        }
+
+        th {
+            background: #222;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transition: 0.3s ease-in-out;
+        }
+
+        tr:nth-child(1) {
+            background: #FFD70099; /* Light Golden */
+        }
+
+        tr:nth-child(2) {
+            background: #C0C0C099; /* Light Silver */
+        }
+
+        tr:nth-child(3) {
+            background: #CD7F3299; /* Light Bronze */
+        }
+
+        td {
+            font-weight: 400;
+        }
+
+    </style>
+</body>
+</html>

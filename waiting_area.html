@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waiting Area</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+        }
+        .container {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            text-align: center;
+        }
+        .game-code {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #ffcc00;
+            background: #333;
+            padding: 5px 15px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .player-list {
+            justify-self: center;
+            background: #222;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            width: 90%;
+            max-width: 100vw; /* Adjust width as per screen */
+            max-height: 300px; /* Restrict height for scrolling */
+            overflow-y: auto;  /* Enable vertical scroll */
+            -ms-overflow-style: none;
+        }
+
+        .player-list::-webkit-scrollbar {
+        display: none;  /* Chrome, Safari */
+        }
+
+        .player-list h2 {
+        font-size: 1rem;
+        margin-bottom: 8px;
+        color: #bb86fc;
+        text-align: left;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive columns */
+            grid-template-rows: repeat(20, auto); /* Fixed 8 rows */
+            gap: 20px; /* Adds spacing */
+            justify-content: center;
+        }
+
+        ul li {
+            background: #333;
+            padding: 8px;
+            border-radius: 12px;
+            font-size: 1rem;
+            text-align: center;
+            min-width: 150px;
+            width: 100px;  /* Makes it take full width */
+            white-space: nowrap;
+        }
+        .timer {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ff4c4c;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="waitingText">Waiting for Players<span class="dots">...</span></h1>
+        <p>Game Code: <span class="game-code" id="gameCode">12345</span></p>
+        <div class="player-list" id="playerList">
+            <h2>Joined Players:</h2>
+            <ul id="players"></ul>
+        </div>
+        <p class="timer">Game starts in: <span id="timeLeft">120</span>s</p>
+    </div>
+
+    <script>
+        function animateDots() {
+            const dots = document.querySelector(".dots");
+            let dotCount = 0;
+            
+            setInterval(() => {
+                dotCount = (dotCount + 1) % 4; // 0, 1, 2, 3 -> cycle
+                dots.textContent = ".".repeat(dotCount);
+            }, 500);
+        }
+        animateDots();
+
+        const param = new URLSearchParams(window.location.search);
+        const gameCode = param.get("gameCode");
+        if(gameCode){
+            document.getElementById("gameCode").textContent = gameCode;
+        }
+
+        let timerInterval = null;
+
+        async function fetchStartTime(){
+            try{
+                const response = await fetch(`http://localhost:8080/api/v1/game/startTime/${gameCode}`)
+                const startTime = await response.text();
+
+                console.log(startTime);
+                if(startTime){
+                    updateCountdown(Number(startTime));
+                }
+            }catch(error){
+                console.error("Error fetching start time:", error);
+            }
+        }
+
+        function updateCountdown(startTime){
+            clearInterval(timerInterval);
+
+            function tick(){
+                const now = Date.now();
+                let timeLeft = Math.max(0, Math.floor((startTime - now) / 1000));
+
+                document.getElementById("timeLeft").textContent = timeLeft;
+
+                if(timeLeft <= 0){
+                    clearInterval(timerInterval);
+                    window.location.href = `question_area.html?gameCode=${gameCode}`;
+                }
+            }
+
+            tick();
+            timerInterval = setInterval(tick, 1000);
+        }
+       
+        async function fetchPlayers() {
+            try{
+                const response = await fetch(`http://localhost:8080/api/v1/game/players/${gameCode}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                });
+
+                const players = await response.json();
+                const playerList = document.getElementById("players");
+                playerList.innerHTML = "";
+
+                players.forEach(player => {
+                    const playerItem = document.createElement("li");
+                    playerItem.textContent = player.name;
+                    playerList.appendChild(playerItem);
+                });
+            } catch(error){
+                console.error("Error fetching players: " + error);
+            }
+        }
+
+        fetchStartTime();
+        setInterval(fetchPlayers, 3000);
+        fetchPlayers();
+    </script>
+</body>
+</html>
