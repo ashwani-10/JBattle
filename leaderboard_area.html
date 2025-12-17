@@ -35,7 +35,9 @@
 
         async function fetchLeaderboard() {
             try {
-                const response = await fetch(API_URL);
+                const response = await fetch(API_URL,{
+                    headers: {"ngrok-skip-browser-warning": "true"}
+                });
                 if (!response.ok) throw new Error("Failed to fetch leaderboard");
 
                 const players = await response.json(); // API se JSON list aayegi
