@@ -30,7 +30,7 @@
         const param = new URLSearchParams(window.location.search);
         const gameCode = param.get("gameCode");
 
-        const API_URL = `http://localhost:8080/api/v1/game/leaderboard/${gameCode}`;
+        const API_URL = `https://ingrid-unextraneous-postvocalically.ngrok-free.dev/api/v1/game/leaderboard/${gameCode}`;
         const userID = localStorage.getItem("userID");
 
         async function fetchLeaderboard() {
