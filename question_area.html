@@ -119,7 +119,7 @@
 
         async function fetchQuestions() {
             try {
-                const response = await fetch(`http://localhost:8080/api/v1/game/questions/${gameCode}`);
+                const response = await fetch(`https://ingrid-unextraneous-postvocalically.ngrok-free.dev/api/v1/game/questions/${gameCode}`);
                 questions = await response.json();
                 if (questions.length > 0) {
                     showQuestion(0);
@@ -215,7 +215,7 @@
             console.log("Final Payload:", JSON.stringify(payload, null, 2));
 
             try {
-                const response = await fetch("http://localhost:8080/api/v1/game/submission", {
+                const response = await fetch("https://ingrid-unextraneous-postvocalically.ngrok-free.dev/api/v1/game/submission", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
