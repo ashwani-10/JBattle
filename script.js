@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     createGameButton.addEventListener("click", async function () {
         try {
-            const response = await fetch("https://ingrid-unextraneous-postvocalically.ngrok-free.dev/api/v1/game/create", {
+            const response = await fetch("http://localhost:8080/api/v1/game/create", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
