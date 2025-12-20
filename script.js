@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         try{
-            const response = await fetch(`https://ingrid-unextraneous-postvocalically.ngrok-free.dev/api/v1/game/join/${gameCode}?playerName=` +encodeURIComponent(username), {
+            const response = await fetch(`http://localhost:8080/api/v1/game/join/${gameCode}?playerName=` +encodeURIComponent(username), {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
