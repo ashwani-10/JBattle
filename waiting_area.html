@@ -121,7 +121,7 @@
 
         async function fetchStartTime(){
             try{
-                const response = await fetch(`https://ingrid-unextraneous-postvocalically.ngrok-free.dev/api/v1/game/startTime/${gameCode}`,
+                const response = await fetch(`http://localhost:8080/api/v1/game/startTime/${gameCode}`,
                     {
                             headers: {"ngrok-skip-browser-warning": "true"}
                     }
@@ -158,7 +158,7 @@
        
         async function fetchPlayers() {
             try{
-                const response = await fetch(`https://ingrid-unextraneous-postvocalically.ngrok-free.dev/api/v1/game/players/${gameCode}`, {
+                const response = await fetch(`http://localhost:8080/api/v1/game/players/${gameCode}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
