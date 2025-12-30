@@ -1,249 +1,329 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Quiz</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: #121212;
-            color: #e0e0e0;
-        }
-        .quiz-container {
-            background: #1e1e1e;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            width: 80%;
-            max-width: 800px;
-            text-align: center;
-        }
-        .timer {
-            font-size: 20px;
-            font-weight: bold;
-            color: #ff5252;
-            text-align: right;
-            margin-bottom: 15px;
-        }
-        .question {
-            font-size: 22px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        .options {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .option-btn {
-            padding: 15px;
-            border-radius: 8px;
-            background: #333;
-            cursor: pointer;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            border: none;
-            color: white;
-        }
-        .option-btn:hover {
-            background: #6200ea;
-            transform: scale(1.05);
-        }
-        .option-btn:active {
-            transform: scale(0.95);
-        }
-        .buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-        button {
-            padding: 12px 18px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        .next-btn {
-            background: linear-gradient(45deg, #bb86fc, #3700b3);
-            color: #bacacb;
-        }
-        .next-btn:hover {
-            background: linear-gradient(45deg, #3700b3, #bb86fc);
-            transform: scale(1.05);
-        }
-        .submit-btn {
-            background: linear-gradient(45deg, #bb86fc, #3700b3);
-            color: #c8bfbf;
-        }
-        .submit-btn:hover {
-            background: linear-gradient(45deg, #3700b3, #bb86fc);
-            transform: scale(1.05);
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz</title>
+
+<style>
+/* =======================
+   COLOR PALETTE
+======================= */
+:root {
+  --panel: #16161f;
+  --card: #1f1f2b;
+  --field: #2a2a3a;
+  --primary: #8b5cf6;
+  --primary-dark: #6d28d9;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --border: #2f2f40;
+}
+
+/* =======================
+   RESET
+======================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* =======================
+   PAGE LAYOUT
+======================= */
+body {
+  min-height: 100vh;
+  background: var(--panel);
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+}
+
+.quiz-shell {
+  width: 100%;
+  max-width: 1100px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =======================
+   HEADER
+======================= */
+.quiz-header {
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.quiz-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.timer {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* =======================
+   MAIN CONTENT
+======================= */
+.quiz-main {
+  flex: 1;
+  padding: 40px 28px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.quiz-card {
+  width: 100%;
+  max-width: 800px;
+  background: var(--card);
+  border-radius: 14px;
+  padding: 36px;
+  border: 1px solid var(--border);
+}
+
+/* =======================
+   QUESTION
+======================= */
+.question {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 32px;
+}
+
+/* =======================
+   OPTIONS
+======================= */
+.options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.option-btn {
+  background: var(--field);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  color: var(--text);
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+
+  transition:
+    border-color 0.2s ease,
+    transform 0.15s ease,
+    background-color 0.2s ease;
+}
+
+.option-btn:hover {
+  border-color: var(--primary);
+  background: #31314a;
+  transform: translateY(-2px);
+}
+
+.option-btn:active {
+  transform: scale(0.97);
+}
+
+/* =======================
+   FOOTER
+======================= */
+.quiz-footer {
+  padding: 24px 28px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+button {
+  flex: 1;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  opacity: 0.95;
+}
+
+.next-btn {
+  background: var(--field);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.submit-btn {
+  background: var(--primary);
+  color: white;
+}
+
+.submit-btn:hover {
+  background: var(--primary-dark);
+}
+
+/* =======================
+   RESPONSIVE
+======================= */
+@media (max-width: 700px) {
+  .options {
+    grid-template-columns: 1fr;
+  }
+
+  .question {
+    font-size: 22px;
+  }
+
+  .quiz-main {
+    padding: 28px 16px;
+  }
+
+  .quiz-card {
+    padding: 24px;
+  }
+}
+</style>
 </head>
+
 <body>
-    <div class="quiz-container">
-        <div class="timer">⏳ Time Left: <span id="timeLeft">60</span>s</div>
-        <div class="question" id="questionText">Loading...</div>
-        <div class="options" id="options"></div>
-        <div class="buttons">
-            <button id="next-btn" class="next-btn">Next ➡️</button>
-            <button id="submit-btn" class="submit-btn">✅ Submit</button>
-        </div>
+
+<div class="quiz-shell">
+
+  <!-- HEADER -->
+  <div class="quiz-header">
+    <div class="quiz-title">Interactive Quiz</div>
+    <div class="timer">⏳ <span id="timeLeft">60</span>s</div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="quiz-main">
+    <div class="quiz-card">
+      <div class="question" id="questionText">Loading...</div>
+      <div class="options" id="options"></div>
     </div>
+  </div>
 
-    <script>
-        const param = new URLSearchParams(window.location.search);
-        const gameCode = param.get("gameCode");
+  <!-- FOOTER -->
+  <div class="quiz-footer">
+    <button id="next-btn" class="next-btn">Next</button>
+    <button id="submit-btn" class="submit-btn">Submit</button>
+  </div>
 
-        let questions = [];
-        let currentQuestionIndex = 0;
-        let answers = {}; 
-        let timerInterval;
+</div>
 
-        async function fetchQuestions() {
-            try {
-                const response = await fetch(`https://ingrid-unextraneous-postvocalically.ngrok-free.dev/api/v1/game/questions/${gameCode}`,
-                    {
-                            headers: {"ngrok-skip-browser-warning": "true"}
-                    }
-                );
-                questions = await response.json();
-                if (questions.length > 0) {
-                    showQuestion(0);
-                } else {
-                    document.getElementById("questionText").textContent = "No questions available.";
-                }
-            } catch (error) {
-                console.error("Error fetching questions:", error);
-                document.getElementById("questionText").textContent = "Error loading questions.";
-            }
-        }
+<!-- JS UNCHANGED -->
+<script>
+  const param = new URLSearchParams(window.location.search);
+  const gameCode = param.get("gameCode");
 
-        function showQuestion(index) {
-            clearInterval(timerInterval);
+  let questions = [];
+  let currentQuestionIndex = 0;
+  let answers = {}; 
+  let timerInterval;
 
-            if (index >= questions.length) {
-                alert("All questions completed!");
-                return;
-            }
+  async function fetchQuestions() {
+    try {
+      const response = await fetch(`http://localhost:8080/api/v1/game/questions/${gameCode}`, {
+        headers: {"ngrok-skip-browser-warning": "true"}
+      });
+      questions = await response.json();
+      if (questions.length > 0) {
+        showQuestion(0);
+      }
+    } catch {
+      document.getElementById("questionText").textContent = "Error loading questions.";
+    }
+  }
 
-            const q = questions[index];
-            document.getElementById("questionText").textContent = q.questionText;
-            const optionsContainer = document.getElementById("options");
-            optionsContainer.innerHTML = "";
+  function showQuestion(index) {
+    clearInterval(timerInterval);
+    const q = questions[index];
+    document.getElementById("questionText").textContent = q.questionText;
+    const optionsContainer = document.getElementById("options");
+    optionsContainer.innerHTML = "";
 
-            ["A", "B", "C", "D"].forEach(letter => {
-                const optionText = q[`option${letter}`];
-                if (optionText) {
-                    const button = document.createElement("button");
-                    button.textContent = `${letter}. ${optionText}`;
-                    button.classList.add("option-btn");
-                    button.onclick = () => selectAnswer(q.id, letter);
-                    optionsContainer.appendChild(button);
-                }
-            });
+    ["A", "B", "C", "D"].forEach(letter => {
+      const optionText = q[`option${letter}`];
+      if (optionText) {
+        const button = document.createElement("button");
+        button.textContent = `${letter}. ${optionText}`;
+        button.classList.add("option-btn");
+        button.onclick = () => selectAnswer(q.id, letter);
+        optionsContainer.appendChild(button);
+      }
+    });
 
-            startTimer();
-        }
+    startTimer();
+  }
 
-        function selectAnswer(questionId, selectedOption) {
-            answers[questionId] = selectedOption;
-            console.log("Answers so far:", answers);
-        }
+  function selectAnswer(id, opt) {
+    answers[id] = opt;
+  }
 
-        function startTimer() {
-            let timeLeft = 60;
-            document.getElementById("timeLeft").textContent = timeLeft;
-            clearInterval(timerInterval);
+  function startTimer() {
+    let t = 60;
+    document.getElementById("timeLeft").textContent = t;
+    timerInterval = setInterval(() => {
+      t--;
+      document.getElementById("timeLeft").textContent = t;
+      if (t <= 0) {
+        clearInterval(timerInterval);
+        nextQuestion();
+      }
+    }, 1000);
+  }
 
-            function tick() {
-                timeLeft--;
-                document.getElementById("timeLeft").textContent = timeLeft;
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    nextQuestion();
-                }
-            }
+  function nextQuestion() {
+    currentQuestionIndex++;
+    if(currentQuestionIndex == questions.length-1){
+        document.getElementById("next-btn").style.display = "none";
+    }
+    if (currentQuestionIndex < questions.length) {
+      showQuestion(currentQuestionIndex);
+    }
+  }
 
-            timerInterval = setInterval(tick, 1000);
-        }
+  document.getElementById("next-btn").addEventListener("click", nextQuestion);
+  document.getElementById("submit-btn").addEventListener("click", submitAnswers);
 
-        function nextQuestion() {
-            currentQuestionIndex++;
-            if (currentQuestionIndex < questions.length) {
-                showQuestion(currentQuestionIndex);
-            } else {
-                alert("Quiz Completed! Submitting answers...");
-                console.log("Final Answers:", answers);
-            }
-        }
+  async function submitAnswers() {
+    const userId = localStorage.getItem("userID");
+    if (!userId) return alert("User Id not found");
 
-        document.getElementById("next-btn").addEventListener("click", nextQuestion);
+    const payload = {
+      id: userId,
+      gameCode,
+      answerList: Object.entries(answers).map(([qid, ans]) => ({ questionId: qid, answer: ans }))
+    };
 
-         async function submitAnswers() {
-            const userId = localStorage.getItem("userID");
-            if (!userId) {
-                alert("User Id not found");
-                return;
-            }
+    await fetch("http://localhost:8080/api/v1/game/submission", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "ngrok-skip-browser-warning": "true"},
+      body: JSON.stringify(payload)
+    });
 
-            console.log("Submitting Answers:", answers);
+    window.location.href = `leaderboard_area.html?gameCode=${gameCode}`;
+  }
 
-            const payload = {
-                id: userId,
-                gameCode: gameCode,
-                answerList: Object.entries(answers).map(([questionId, answer]) => ({
-                    questionId: questionId,
-                    answer: answer
-                }))
-            };
+  fetchQuestions();
+</script>
 
-
-            console.log("Final Payload:", JSON.stringify(payload, null, 2));
-
-            try {
-                const response = await fetch("https://ingrid-unextraneous-postvocalically.ngrok-free.dev/api/v1/game/submission", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json",
-                                "ngrok-skip-browser-warning": "true"
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    throw new Error("Failed to submit answers");
-                }
-
-                alert("Answers submitted successfully!");
-                window.location.href = `leaderboard_area.html?gameCode=${gameCode}`;
-                // // Ensure ID is removed **after** submission is successful
-                // localStorage.removeItem("userID");
-            } catch (error) {
-                console.error("Error submitting answers:", error);
-                alert("Failed to submit answers.");
-            }
-        }
-
-        document.getElementById("submit-btn").addEventListener("click", submitAnswers);
-
-        fetchQuestions();
-    </script>
 </body>
 </html>

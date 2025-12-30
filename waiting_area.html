@@ -1,189 +1,246 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Waiting Area</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Waiting Area</title>
 
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #121212;
-            color: #e0e0e0;
-            font-family: 'Poppins', sans-serif;
-            text-align: center;
-        }
-        .container {
-            background: #1e1e1e;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            width: 100%;
-            text-align: center;
-        }
-        .game-code {
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #ffcc00;
-            background: #333;
-            padding: 5px 15px;
-            border-radius: 8px;
-            display: inline-block;
-            margin-top: 10px;
-        }
-        .player-list {
-            justify-self: center;
-            background: #222;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            width: 90%;
-            max-width: 100vw; /* Adjust width as per screen */
-            max-height: 300px; /* Restrict height for scrolling */
-            overflow-y: auto;  /* Enable vertical scroll */
-            -ms-overflow-style: none;
-        }
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
-        .player-list::-webkit-scrollbar {
-        display: none;  /* Chrome, Safari */
-        }
+* {
+    box-sizing: border-box;
+}
 
-        .player-list h2 {
-        font-size: 1rem;
-        margin-bottom: 8px;
-        color: #bb86fc;
-        text-align: left;
-        }
+body {
+    margin: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: 'Poppins', sans-serif;
+}
 
-        ul {
-            list-style: none;
-            padding: 0;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive columns */
-            grid-template-rows: repeat(20, auto); /* Fixed 8 rows */
-            gap: 20px; /* Adds spacing */
-            justify-content: center;
-        }
+/* FULL SCREEN WRAPPER */
+.container {
+    width: 100vw;
+    height: 100vh;
+    padding: 32px 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #121212;
+}
 
-        ul li {
-            background: #333;
-            padding: 8px;
-            border-radius: 12px;
-            font-size: 1rem;
-            text-align: center;
-            min-width: 150px;
-            width: 100px;  /* Makes it take full width */
-            white-space: nowrap;
-        }
-        .timer {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #ff4c4c;
-            margin-top: 15px;
-        }
-    </style>
+/* CENTER CONTENT */
+.content {
+    width: 100%;
+    max-width: 1200px;
+    background: #1e1e1e;
+    padding: 28px;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    text-align: center;
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 6px;
+}
+
+.host {
+    margin-top: 6px;
+    font-size: 1rem;
+    color: #bb86fc;
+}
+
+.game-code {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #ffcc00;
+    background: #333;
+    padding: 6px 18px;
+    border-radius: 10px;
+    display: inline-block;
+    margin-top: 12px;
+}
+
+/* PLAYER LIST */
+.player-list {
+    background: #222;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 24px;
+    max-height: 360px;
+    overflow-y: auto;
+}
+
+.player-list h2 {
+    text-align: left;
+    font-size: 1.1rem;
+    color: #bb86fc;
+    margin-bottom: 14px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+}
+
+ul li {
+    background: #333;
+    padding: 10px;
+    border-radius: 12px;
+    font-size: 1rem;
+    white-space: nowrap;
+}
+
+/* TIMER */
+.timer {
+    margin-top: 20px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ff4c4c;
+}
+
+/* SCROLLBAR HIDE */
+.player-list::-webkit-scrollbar {
+    display: none;
+}
+</style>
 </head>
+
 <body>
-    <div class="container">
-        <h1 id="waitingText">Waiting for Players<span class="dots">...</span></h1>
-        <p>Game Code: <span class="game-code" id="gameCode">12345</span></p>
-        <div class="player-list" id="playerList">
-            <h2>Joined Players:</h2>
+
+<div class="container">
+    <div class="content">
+
+        <h1 id="waitingText">
+            Waiting for Players<span class="dots">...</span>
+        </h1>
+
+        <p class="host">
+            Hosted by: <span id="hostName">—</span>
+        </p>
+
+        <p>
+            Game Code:
+            <span class="game-code" id="gameCode">----</span>
+        </p>
+
+        <div class="player-list">
+            <h2>Joined Players</h2>
             <ul id="players"></ul>
         </div>
-        <p class="timer">Game starts in: <span id="timeLeft">120</span>s</p>
+
+        <p class="timer">
+            Game starts in: <span id="timeLeft">--</span>s
+        </p>
+
     </div>
+</div>
 
-    <script>
-        function animateDots() {
-            const dots = document.querySelector(".dots");
-            let dotCount = 0;
-            
-            setInterval(() => {
-                dotCount = (dotCount + 1) % 4; // 0, 1, 2, 3 -> cycle
-                dots.textContent = ".".repeat(dotCount);
-            }, 500);
-        }
-        animateDots();
+<script>
+/* Animate dots */
+(function animateDots(){
+    const dots = document.querySelector(".dots");
+    let count = 0;
+    setInterval(() => {
+        count = (count + 1) % 4;
+        dots.textContent = ".".repeat(count);
+    }, 500);
+})();
 
-        const param = new URLSearchParams(window.location.search);
-        const gameCode = param.get("gameCode");
-        if(gameCode){
-            document.getElementById("gameCode").textContent = gameCode;
-        }
+/* Read game code */
+const params = new URLSearchParams(window.location.search);
+const gameCode = params.get("gameCode");
+if (gameCode) {
+    document.getElementById("gameCode").textContent = gameCode;
+}
 
-        let timerInterval = null;
+/* Show host */
+const host = localStorage.getItem("hostName");
+if (host) {
+    document.getElementById("hostName").textContent = host;
+}
 
-        async function fetchStartTime(){
-            try{
-                const response = await fetch(`http://localhost:8080/api/v1/game/startTime/${gameCode}`,
-                    {
-                            headers: {"ngrok-skip-browser-warning": "true"}
-                    }
-                )
-                const startTime = await response.text();
+/* Countdown */
+let timerInterval = null;
 
-                console.log(startTime);
-                if(startTime){
-                    updateCountdown(Number(startTime));
-                }
-            }catch(error){
-                console.error("Error fetching start time:", error);
-            }
-        }
+async function fetchStartTime() {
+    try {
+        const res = await fetch(
+            `http://localhost:8080/api/v1/game/startTime/${gameCode}`,
+            { headers: { "ngrok-skip-browser-warning": "true" } }
+        );
+        const startTime = await res.text();
+        if (startTime) startCountdown(Number(startTime));
+    } catch (e) {
+        console.error(e);
+    }
+}
 
-        function updateCountdown(startTime){
+function startCountdown(startTime) {
+    clearInterval(timerInterval);
+
+    function tick() {
+        const now = Date.now();
+        const timeLeft = Math.max(0, Math.floor((startTime - now) / 1000));
+        document.getElementById("timeLeft").textContent = timeLeft;
+
+        if (timeLeft <= 0) {
             clearInterval(timerInterval);
+            window.location.href = `question_area.html?gameCode=${gameCode}`;
+        }
+    }
 
-            function tick(){
-                const now = Date.now();
-                let timeLeft = Math.max(0, Math.floor((startTime - now) / 1000));
+    tick();
+    timerInterval = setInterval(tick, 1000);
+}
 
-                document.getElementById("timeLeft").textContent = timeLeft;
-
-                if(timeLeft <= 0){
-                    clearInterval(timerInterval);
-                    window.location.href = `question_area.html?gameCode=${gameCode}`;
+/* Fetch players */
+async function fetchPlayers() {
+    try {
+        const res = await fetch(
+            `http://localhost:8080/api/v1/game/players/${gameCode}`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "ngrok-skip-browser-warning": "true"
                 }
             }
+        );
+        const players = await res.json();
+        const list = document.getElementById("players");
+        list.innerHTML = "";
 
-            tick();
-            timerInterval = setInterval(tick, 1000);
+        if (players.length > 0) {
+            document.getElementById("hostName").textContent = players[0].name;
         }
-       
-        async function fetchPlayers() {
-            try{
-                const response = await fetch(`http://localhost:8080/api/v1/game/players/${gameCode}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "ngrok-skip-browser-warning": "true"
-                    },
-                });
 
-                const players = await response.json();
-                console.log(players);
-                const playerList = document.getElementById("players");
-                playerList.innerHTML = "";
-
-                players.forEach(player => {
-                    const playerItem = document.createElement("li");
-                    playerItem.textContent = player.name;
-                    playerList.appendChild(playerItem);
-                });
-            } catch(error){
-                console.error("Error fetching players: " + error);
+        players.forEach((player,index) => {
+            if(index!=0){   
+            const li = document.createElement("li");
+            li.textContent = player.name;
+            list.appendChild(li);
+            }else{
+                localStorage.setItem("host",player.name);
             }
-        }
+        });
+    } catch (e) {
+        console.error(e);
+    }
+}
 
-        fetchStartTime();
-        setInterval(fetchPlayers, 3000);
-        fetchPlayers();
-    </script>
+/* Init */
+fetchStartTime();
+fetchPlayers();
+setInterval(fetchPlayers, 3000);
+</script>
+
 </body>
 </html>

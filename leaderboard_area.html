@@ -30,7 +30,7 @@
         const param = new URLSearchParams(window.location.search);
         const gameCode = param.get("gameCode");
 
-        const API_URL = `https://ingrid-unextraneous-postvocalically.ngrok-free.dev/api/v1/game/leaderboard/${gameCode}`;
+        const API_URL = `http://localhost:8080/api/v1/game/leaderboard/${gameCode}`;
         const userID = localStorage.getItem("userID");
 
         async function fetchLeaderboard() {
@@ -46,6 +46,7 @@
                 leaderboardBody.innerHTML = ""; // Purani rows clear
 
                 players.forEach((player, index) => {
+                    if(player.name != localStorage.getItem("host")){
                     const row = document.createElement("tr");
 
                     let rank = index + 1; // Rank 1 se start karna hai
@@ -66,6 +67,7 @@
                         <td>${player.score}</td>
                     `;
                     leaderboardBody.appendChild(row);
+                    }
                 });
             } catch (error) {
                 console.error("Error fetching leaderboard:", error);
