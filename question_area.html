@@ -240,7 +240,7 @@ button:hover {
 
   async function fetchQuestions() {
     try {
-      const response = await fetch(`http://localhost:8080/api/v1/game/questions/${gameCode}`, {
+      const response = await fetch(`https://ingrid-unextraneous-postvocalically.ngrok-free.dev/api/v1/game/questions/${gameCode}`, {
         headers: {"ngrok-skip-browser-warning": "true"}
       });
       questions = await response.json();
@@ -313,7 +313,7 @@ button:hover {
       answerList: Object.entries(answers).map(([qid, ans]) => ({ questionId: qid, answer: ans }))
     };
 
-    await fetch("http://localhost:8080/api/v1/game/submission", {
+    await fetch("https://ingrid-unextraneous-postvocalically.ngrok-free.dev/api/v1/game/submission", {
       method: "POST",
       headers: {"Content-Type": "application/json", "ngrok-skip-browser-warning": "true"},
       body: JSON.stringify(payload)

@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/v1/game/create/${category}`,
+        `https://ingrid-unextraneous-postvocalically.ngrok-free.dev/api/v1/game/create/${category}`,
         {
           method: "POST",
           headers: {
@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/v1/game/join/${gameCode}?playerName=${encodeURIComponent(username)}`,
+        `https://ingrid-unextraneous-postvocalically.ngrok-free.dev/api/v1/game/join/${gameCode}?playerName=${encodeURIComponent(username)}`,
         {
           method: "POST",
           headers: {
