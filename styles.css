@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+:root{
+  --bg: #121212;
+  --card: #1e1e1e;
+  --text: #ffffff;
+}
+
+*{box-sizing: border-box;margin:0;padding:0}
+
+body{
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Basic table defaults used by leaderboard */
+.table-container{max-height:100vh;overflow-y:auto}
+.table-container table{width:100%;border-collapse:collapse}
+th,td{padding:12px;border-bottom:1px solid #333}
+th{background:#222;font-weight:600}
+
+/* small utility */
+.center{display:flex;align-items:center;justify-content:center}
