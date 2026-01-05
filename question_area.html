@@ -137,6 +137,14 @@ body {
   transform: scale(0.97);
 }
 
+/* Highlighted (selected) option */
+.option-btn.selected {
+  border-color: var(--primary);
+  background: linear-gradient(90deg, rgba(139,92,246,0.10), rgba(109,40,217,0.06));
+  box-shadow: 0 8px 24px rgba(13,12,22,0.45);
+  transform: translateY(-2px);
+}
+
 /* =======================
    FOOTER
 ======================= */
@@ -265,32 +273,58 @@ button:hover {
         const button = document.createElement("button");
         button.textContent = `${letter}. ${optionText}`;
         button.classList.add("option-btn");
-        button.onclick = () => selectAnswer(q.id, letter);
+        button.dataset.letter = letter;
+        button.onclick = (e) => selectAnswer(q.id, letter, e.currentTarget);
         optionsContainer.appendChild(button);
       }
     });
 
-    startTimer();
+    if (answers[q.id]) {
+      const selectedBtn = Array.from(optionsContainer.children).find(b => b.dataset.letter === answers[q.id]);
+      if (selectedBtn) selectedBtn.classList.add("selected");
+    }
+
+    startOrResumeTimer(q.id);
   }
 
-  function selectAnswer(id, opt) {
+  function selectAnswer(id, opt, btn) {
     answers[id] = opt;
+    const optionsContainer = document.getElementById("options");
+    Array.from(optionsContainer.children).forEach(b => b.classList.remove("selected"));
+    if (btn) btn.classList.add("selected");
   }
 
-  function startTimer() {
-    let t = 60;
-    document.getElementById("timeLeft").textContent = t;
-    timerInterval = setInterval(() => {
-      t--;
-      document.getElementById("timeLeft").textContent = t;
-      if (t <= 0) {
+  function startOrResumeTimer(questionId) {
+    const key = `timer_end_${questionId}`;
+    let end = parseInt(localStorage.getItem(key), 10);
+    if (!end || isNaN(end)) {
+      end = Date.now() + 60000; // 60s from now
+      localStorage.setItem(key, end);
+    }
+    startTimerWithEnd(questionId, end);
+  }
+
+  function startTimerWithEnd(questionId, endTimestamp) {
+    clearInterval(timerInterval);
+    function tick() {
+      const remMs = endTimestamp - Date.now();
+      const t = Math.ceil(remMs / 1000);
+      document.getElementById("timeLeft").textContent = t > 0 ? t : 0;
+      if (remMs <= 0) {
         clearInterval(timerInterval);
+        localStorage.removeItem(`timer_end_${questionId}`);
         nextQuestion();
       }
-    }, 1000);
+    }
+    tick();
+    timerInterval = setInterval(tick, 1000);
   }
 
   function nextQuestion() {
+    // remove timer for current question (user moved on)
+    const currQ = questions[currentQuestionIndex];
+    if (currQ) localStorage.removeItem(`timer_end_${currQ.id}`);
+
     currentQuestionIndex++;
     if(currentQuestionIndex == questions.length-1){
         document.getElementById("next-btn").style.display = "none";
@@ -319,10 +353,34 @@ button:hover {
       body: JSON.stringify(payload)
     });
 
+    // clear gameStarted so back navigation is allowed after submission
+    localStorage.removeItem('gameStarted');
+    // clear any remaining per-question timers
+    questions.forEach(q => localStorage.removeItem(`timer_end_${q.id}`));
+
     window.location.href = `leaderboard_area.html?gameCode=${gameCode}`;
   }
 
   fetchQuestions();
+
+  // Prevent back navigation while a game is started
+  if (localStorage.getItem('gameStarted') === 'true') {
+    history.pushState(null, null, location.href);
+  }
+  window.addEventListener('popstate', function () {
+    if (localStorage.getItem('gameStarted') === 'true') {
+      history.pushState(null, null, location.href);
+      alert('You cannot go back during an active game.');
+    }
+  });
+
+  // mark game as started when questions load
+  // (if other code already sets this, this is harmless)
+  window.addEventListener('load', () => {
+    if (!localStorage.getItem('gameStarted')) {
+      localStorage.setItem('gameStarted', 'true');
+    }
+  });
 </script>
 
 </body>

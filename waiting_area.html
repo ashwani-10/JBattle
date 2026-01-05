@@ -194,6 +194,7 @@ function startCountdown(startTime) {
 
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
+            localStorage.setItem("gameStarted", "true");
             window.location.href = `question_area.html?gameCode=${gameCode}`;
         }
     }
